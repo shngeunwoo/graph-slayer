@@ -1,0 +1,5 @@
+:HL["/graph-slayer/_next/static/chunks/27vccr55k0_qw.css","style"]
+:HL["/graph-slayer/_next/static/chunks/13lo9sowzwq4f.css","style"]
+:HL["/graph-slayer/_next/static/media/0ced19e4530075c8-s.p.3m-x668a1_8-3.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/graph-slayer/_next/static/media/fca78c2ee6cec166-s.p.2q2xrf88wug3q.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}},"staleTime":300,"buildId":"ne0JXAoO-c8qMp3_RuwGI"}
