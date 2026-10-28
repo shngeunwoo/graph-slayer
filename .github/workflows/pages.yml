@@ -1,0 +1,91 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch large sources if missing
+        run: |
+          set -euo pipefail
+          fetch() {
+            local path="$1" url="$2" sha="$3"
+            if [ -f "$path" ]; then
+              echo "have $path"
+              return
+            fi
+            mkdir -p "$(dirname "$path")"
+            curl -fsSL -A "Mozilla/5.0" -o "$path" "$url"
+            echo "$sha  $path" | sha256sum -c -
+          }
+          fetch src/components/game/GraphCanvas.tsx \
+            "https://tmpfiles.org/dl/1793172429.9ff6a6de057b9cdf/wZADLoRwjaUk/graphcanvas.tsx" \
+            eb0b13c6ddddb9391343c654f331def99f3ade7533fb44b183555157e6be1d55
+          fetch src/components/game/MathSlashGame.tsx \
+            "https://tmpfiles.org/dl/1793172430.52be98aa1cd3d122/wMACLMRTjzXd/mathslashgame.tsx" \
+            aecb1b06e246c62b497f8975e53222823da5c3afaef0633728d2cfd4cc1870cb
+      - name: Keep fetched sources on main
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git add src/components/game/GraphCanvas.tsx src/components/game/MathSlashGame.tsx
+          if git diff --cached --quiet; then
+            echo "sources already committed"
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -m "큰 소스 파일을 저장소에 넣는다 [skip ci]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build
+        env:
+          GITHUB_PAGES: "true"
+      - run: touch out/.nojekyll
+      - name: Publish to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd out
+          git init
+          git checkout -B gh-pages
+          git add -A
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -m "Deploy Pages site"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+      - name: Turn on GitHub Pages
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -sS -o /tmp/pages.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}'
+          echo
+          curl -sS -X PUT \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}' || true
