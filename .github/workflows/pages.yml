@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
@@ -15,6 +17,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: Fetch large sources if missing
@@ -60,32 +65,8 @@ jobs:
         env:
           GITHUB_PAGES: "true"
       - run: touch out/.nojekyll
-      - name: Publish to gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          cd out
-          git init
-          git checkout -B gh-pages
-          git add -A
-          git -c user.name='github-actions[bot]' \
-              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
-              commit -m "Deploy Pages site"
-          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
-      - name: Turn on GitHub Pages
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -sS -o /tmp/pages.json -w "%{http_code}" -X POST \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
-            -d '{"source":{"branch":"gh-pages","path":"/"}}'
-          echo
-          curl -sS -X PUT \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
-            -d '{"source":{"branch":"gh-pages","path":"/"}}' || true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+      - id: deployment
+        uses: actions/deploy-pages@v4
