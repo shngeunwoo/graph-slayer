@@ -20,7 +20,7 @@ npm run dev
 
 ## 배포
 
-서재와 같이 GitHub Pages에 올립니다. `main`에 푸시하면 Actions가 `gh-pages` 브랜치로 배포합니다.
+서재와 같이 GitHub Pages에 올립니다. `main`에 푸시하면 Actions가 `gh-pages` 브랜치로 배포합니다. 처음 한 번은 [Pages 설정](https://github.com/shngeunwoo/graph-slayer/settings/pages)에서 Source를 Deploy from a branch, 브랜치를 `gh-pages`, 폴더를 `/` 로 저장합니다.
 
 - 저장소: https://github.com/shngeunwoo/graph-slayer
 - 사이트: https://shngeunwoo.github.io/graph-slayer/
