@@ -1,6 +1,6 @@
 # 약점베기
 
-공통수학 1·2 단원이 상대입니다. 결투 전과 처치 뒤에 **증강 셋 중 하나**를 고릅니다. 약점 식은 그래프 위 검은 칸에 나옵니다. 곡선 전체는 베기 전에 보이지 않고, 맞춘 점 주변만 열립니다. 선을 긋는 동안 밀착 게이지가 차며, 일섬이 되면 베기 버튼이 달아오릅니다. 빗나간 점은 취소할 수 있고, 베기 뒤에는 점이 남은 채로 다시 긋습니다. 좌표는 `1/2` 같은 분수도 받습니다. 빗나간 점 없이 연속으로 맞추면 콤보가 붙어 피해가 늘어납니다.
+공통수학 1·2 단원이 상대입니다. 결투 전과 처치 뒤에 **증강 셋 중 하나**를 고릅니다. 약점 식은 그래프 위 검은 칸에 나옵니다. 곡선 전체는 베기 전에 보이지 않고, 맞춘 점 주변만 열립니다. 선을 귻는 동안 밀착 게이지가 차며, 일섬이 되면 베기 버튼이 달아오릅니다. 빗나간 점은 취소할 수 있고, 베기 뒤에는 점이 남은 채로 다시 귻습니다. 좌표는 `1/2` 같은 분수도 받습니다. 빗나간 점 없이 연속으로 맞추면 콤보가 붙어 피해가 늘어납니다.
 
 ## 하는 법
 
@@ -20,7 +20,13 @@ npm run dev
 
 ## 배포
 
-서재와 같이 GitHub Pages에 올립니다. `main`에 푸시하면 Actions가 `gh-pages` 브랜치로 배포합니다. 처음 한 번은 [Pages 설정](https://github.com/shngeunwoo/graph-slayer/settings/pages)에서 Source를 Deploy from a branch, 브랜치를 `gh-pages`, 폴더를 `/` 로 저장합니다.
+서재와 같이 GitHub Pages에 올립니다. `main`에 푸시하면 Actions가 정적 사이트를 `gh-pages` 브랜치에 올립니다. 사이트 스위치는 Actions 토큰으로 켤 수 없어서, 처음 한 번은 저장소 설정에서 저장해야 합니다.
+
+1. [Pages 설정](https://github.com/shngeunwoo/graph-slayer/settings/pages)을 엽니다.
+2. Build and deployment의 Source를 **Deploy from a branch**로 고릅니다.
+3. 브랜치는 **gh-pages**, 폴더는 **/** 로 두고 Save를 누릅니다.
+
+저장하면 아래 주소에 게임이 열립니다.
 
 - 저장소: https://github.com/shngeunwoo/graph-slayer
 - 사이트: https://shngeunwoo.github.io/graph-slayer/
